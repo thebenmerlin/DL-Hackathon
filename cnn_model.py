@@ -6,14 +6,19 @@ from PIL import Image
 
 class CNNFeatureExtractor(nn.Module):
     """
-    CNN-based feature extractor using pre-trained ResNet-50.
+    CNN-based feature extractor using pre-trained ResNet-18.
     Removes the final classification layer to get feature vectors.
+    Uses ResNet-18 (lighter) instead of ResNet-50 for memory efficiency.
     """
     def __init__(self, embed_size=256):
         super(CNNFeatureExtractor, self).__init__()
         
-        # Load pre-trained ResNet-50
-        resnet = models.resnet50(weights=models.ResNet50_Weights.DEFAULT)
+        # Load pre-trained ResNet-18 (lighter than ResNet-50)
+        # Use local_cache to avoid re-downloading
+        import os
+        os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(__file__), '.torch_cache')
+        
+        resnet = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
         
         # Remove the final classification layer
         # Take all layers except the final FC layer

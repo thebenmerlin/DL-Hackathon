@@ -39,12 +39,17 @@ app.add_middleware(
 )
 
 # Configuration
-DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+DEVICE = torch.device('cpu')  # Force CPU for Render free tier
 EMBED_SIZE = 256
-HIDDEN_SIZE = 512
+HIDDEN_SIZE = 256  # Reduced from 512 to save memory
 VOCAB_PATH = "models/vocab.pkl"
 ENCODER_PATH = "models/encoder.pth"
 DECODER_PATH = "models/decoder.pth"
+
+# Memory optimizations for Render free tier (512MB limit)
+torch.set_num_threads(2)  # Limit threads
+import gc
+gc.collect()
 
 # Global variables for models
 encoder = None
@@ -64,6 +69,9 @@ def load_models():
     
     print("Loading models...")
     
+    # Set cache location
+    os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.torch_cache')
+    
     # Check if models exist
     if not os.path.exists(ENCODER_PATH) or not os.path.exists(DECODER_PATH):
         print("Models not found. Running initial training...")
@@ -77,7 +85,8 @@ def load_models():
         vocab = Vocabulary.load(VOCAB_PATH)
         print(f"Vocabulary loaded: {len(vocab)} words")
         
-        # Initialize models
+        # Initialize models (will download ResNet-18 if not cached)
+        print("Initializing CNN feature extractor (ResNet-18)...")
         encoder = CNNFeatureExtractor(embed_size=EMBED_SIZE).to(DEVICE)
         decoder = LSTMDecoderWithAttention(
             vocab_size=len(vocab),
@@ -86,9 +95,10 @@ def load_models():
             num_layers=1
         ).to(DEVICE)
         
-        # Load weights
-        encoder.load_state_dict(torch.load(ENCODER_PATH, map_location=DEVICE))
-        decoder.load_state_dict(torch.load(DECODER_PATH, map_location=DEVICE))
+        # Load saved weights (downloaded during build)
+        print("Loading saved model weights...")
+        encoder.load_state_dict(torch.load(ENCODER_PATH, map_location=DEVICE, weights_only=True))
+        decoder.load_state_dict(torch.load(DECODER_PATH, map_location=DEVICE, weights_only=True))
         print("Models loaded successfully")
     
     # Set to evaluation mode

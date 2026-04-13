@@ -19,6 +19,9 @@ from cnn_model import CNNFeatureExtractor
 from rnn_model import LSTMDecoderWithAttention
 from vocabulary import Vocabulary, build_vocabulary
 
+# Set cache location to project directory
+os.environ['TORCH_HOME'] = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.torch_cache')
+
 
 class CaptionDataset(Dataset):
     """Dataset for image-caption pairs."""
