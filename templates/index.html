@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Caption Generator - AI Vision</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="logo">
+                    <span class="material-icons">auto_awesome</span>
+                    <h1>AI Vision</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" id="themeToggle" title="Toggle theme">
+                        <span class="material-icons">dark_mode</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <!-- Upload Section -->
+                <section class="upload-section">
+                    <div class="upload-container" id="uploadContainer">
+                        <input type="file" id="fileInput" accept="image/*" hidden>
+                        
+                        <div class="upload-placeholder" id="uploadPlaceholder">
+                            <span class="material-icons upload-icon">cloud_upload</span>
+                            <h2>Upload an Image</h2>
+                            <p>Drag and drop an image here, or click to browse</p>
+                            <button class="btn-primary" id="uploadBtn">
+                                <span class="material-icons">add_photo_alternate</span>
+                                Choose Image
+                            </button>
+                            <p class="supported-formats">Supports: JPG, PNG, WebP</p>
+                        </div>
+
+                        <div class="image-preview" id="imagePreview" style="display: none;">
+                            <img id="previewImage" src="" alt="Preview">
+                            <div class="preview-actions">
+                                <button class="btn-secondary" id="changeImageBtn">
+                                    <span class="material-icons">refresh</span>
+                                    Change Image
+                                </button>
+                                <button class="btn-primary" id="generateBtn">
+                                    <span class="material-icons">auto_awesome</span>
+                                    Generate Caption
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="upload-loading" id="uploadLoading" style="display: none;">
+                            <div class="spinner"></div>
+                            <p>Analyzing image...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recent Captions -->
+                <section class="recent-section" id="recentSection" style="display: none;">
+                    <h3>Recent Captions</h3>
+                    <div class="recent-grid" id="recentGrid"></div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Gemini-style Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <span class="material-icons">description</span>
+                <h2>Caption Details</h2>
+            </div>
+
+            <div class="sidebar-content" id="sidebarContent">
+                <div class="sidebar-empty" id="sidebarEmpty">
+                    <span class="material-icons">image_not_supported</span>
+                    <p>Upload an image to see caption and description</p>
+                </div>
+
+                <div class="caption-result" id="captionResult" style="display: none;">
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="material-icons">title</span>
+                            <h3>Generated Caption</h3>
+                        </div>
+                        <div class="caption-text" id="captionText"></div>
+                        <div class="result-meta">
+                            <span class="meta-item">
+                                <span class="material-icons">schedule</span>
+                                <span id="inferenceTime"></span>
+                            </span>
+                            <span class="meta-item">
+                                <span class="material-icons">psychology</span>
+                                <span id="generationMethod"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="material-icons">info</span>
+                            <h3>Image Description</h3>
+                        </div>
+                        <div class="description-text" id="descriptionText"></div>
+                    </div>
+
+                    <div class="result-card">
+                        <div class="result-header">
+                            <span class="material-icons">analytics</span>
+                            <h3>Scene Analysis</h3>
+                        </div>
+                        <div class="scene-tags" id="sceneTags"></div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn-outline" id="copyCaption">
+                            <span class="material-icons">content_copy</span>
+                            Copy Caption
+                        </button>
+                        <button class="btn-outline" id="shareResult">
+                            <span class="material-icons">share</span>
+                            Share
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="material-icons" id="toastIcon">check_circle</span>
+        <span id="toastMessage"></span>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
